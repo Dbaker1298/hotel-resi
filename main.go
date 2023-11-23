@@ -41,12 +41,11 @@ func main() {
 	app := fiber.New(config)
 	apiv1 := app.Group("/api/v1")
 
+	apiv1.Put("/user/:id", userHandler.HandlePutUser)
+	apiv1.Delete("/user/:id", userHandler.HandleDeleteUser)
 	apiv1.Post("/user", userHandler.HandlePostUser)
 	apiv1.Get("/user", userHandler.HandleGetUsers)
 	apiv1.Get("/user/:id", userHandler.HandleGetUser)
 	app.Listen(*listenAddr)
 }
 
-func handleFoo(c *fiber.Ctx) error {
-	return c.JSON(map[string]string{"msg": "working just fine"})
-}
