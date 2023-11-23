@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/Dbaker1298/hotel-resi/types"
 	"go.mongodb.org/mongo-driver/bson"
@@ -11,7 +12,13 @@ import (
 
 const userColl = "users"
 
+type Dropper interface {
+	Drop(context.Context) error
+}
+
 type UserStore interface {
+	Dropper
+
 	GetUserByID(ctx context.Context, id string) (*types.User, error)
 	GetUsers(ctx context.Context) ([]*types.User, error)
 	InsertUser(ctx context.Context, user *types.User) (*types.User, error)
@@ -22,6 +29,18 @@ type UserStore interface {
 type MongoUserStore struct {
 	client *mongo.Client
 	coll   *mongo.Collection
+}
+
+func NewMongoUserStore(client *mongo.Client, dbname string) *MongoUserStore {
+	return &MongoUserStore{
+		client: client,
+		coll:   client.Database(dbname).Collection(userColl),
+	}
+}
+
+func (s *MongoUserStore) Drop(ctx context.Context) error {
+	fmt.Println("--- dropping users collection ---")
+	return s.coll.Drop(ctx)
 }
 
 func (s *MongoUserStore) UpdateUser(ctx context.Context, filter bson.M, params types.UpdateUserParams) error {
@@ -59,13 +78,6 @@ func (s *MongoUserStore) InsertUser(ctx context.Context, user *types.User) (*typ
 	}
 	user.ID = res.InsertedID.(primitive.ObjectID)
 	return user, nil
-}
-
-func NewMongoUserStore(client *mongo.Client) *MongoUserStore {
-	return &MongoUserStore{
-		client: client,
-		coll:   client.Database(DBNAME).Collection(userColl),
-	}
 }
 
 func (s *MongoUserStore) GetUsers(ctx context.Context) ([]*types.User, error) {
