@@ -25,10 +25,9 @@ type MongoUserStore struct {
 }
 
 func (s *MongoUserStore) UpdateUser(ctx context.Context, filter bson.M, params types.UpdateUserParams) error {
-
 	update := bson.D{
 		{
-			"$set", params.ToBSON(),
+			Key: "$set", Value: params.ToBSON(),
 		},
 	}
 	_, err := s.coll.UpdateOne(ctx, filter, update)
