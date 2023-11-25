@@ -2,7 +2,6 @@ package api
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -10,41 +9,22 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/Dbaker1298/hotel-resi/db"
-	"github.com/Dbaker1298/hotel-resi/types"
+	"github.com/Dbaker1298/hotel-resi/db/fixtures"
 	"github.com/gofiber/fiber/v2"
 )
-
-func insertTestUser(t *testing.T, userStore db.UserStore) *types.User {
-	user, err := types.NewUserFromParams(&types.CreateUserParams{
-		Email:     "test@testing.com",
-		FirstName: "Test",
-		LastName:  "Tester",
-		Password:  "supersecurepassword",
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	_, err = userStore.InsertUser(context.TODO(), user)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return user
-}
 
 func TestAuthenticateWrongPassword(t *testing.T) {
 	tdb := setup(t)
 	defer tdb.teardown(t)
-	insertTestUser(t, tdb.UserStore)
+	fixtures.AddUser(tdb.Store, "james", "bond", false)
 
 	app := fiber.New()
-	authHandler := NewAuthHandler(tdb.UserStore)
+	authHandler := NewAuthHandler(tdb.User)
 	app.Post("/auth", authHandler.HandleAuthenticate)
 
 	params := AuthParams{
-		Email:    "test@testing.com",
-		Password: "supersecurepass",
+		Email:    "james@bond.com",
+		Password: "supersecurepassnotcorrect",
 	}
 
 	b, _ := json.Marshal(params)
@@ -72,21 +52,21 @@ func TestAuthenticateWrongPassword(t *testing.T) {
 	if genResp.Msg != "invalid credentials" {
 		t.Fatalf("expected msg to be <invalid credentials>, got %s", genResp.Msg)
 	}
-
 }
 
 func TestAuthenticateSuccess(t *testing.T) {
 	tdb := setup(t)
 	defer tdb.teardown(t)
-	insertedUser := insertTestUser(t, tdb.UserStore)
+	// insertedUser := insertTestUser(t, tdb.User)
+	insertedUser := fixtures.AddUser(tdb.Store, "james", "bond", false)
 
 	app := fiber.New()
-	authHandler := NewAuthHandler(tdb.UserStore)
+	authHandler := NewAuthHandler(tdb.User)
 	app.Post("/auth", authHandler.HandleAuthenticate)
 
 	params := AuthParams{
-		Email:    "test@testing.com",
-		Password: "supersecurepassword",
+		Email:    "james@bond.com",
+		Password: "james_bond",
 	}
 
 	b, _ := json.Marshal(params)
