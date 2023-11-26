@@ -36,7 +36,10 @@ func TestPostUser(t *testing.T) {
 	}
 
 	var user types.User
-	json.NewDecoder(resp.Body).Decode(&user)
+	err = json.NewDecoder(resp.Body).Decode(&user)
+	if err != nil {
+		t.Error(err)
+	}
 	if len(user.ID) == 0 {
 		t.Error("expected user ID to be set")
 	}
