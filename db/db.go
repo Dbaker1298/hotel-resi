@@ -1,10 +1,6 @@
 package db
 
-const (
-	DBNAME     = "hotel-resi"
-	TestDBNAME = "hotel-resi-test"
-	DBURI      = "mongodb://localhost:27017"
-)
+const MongoDBNameEnvName = "MONGO_DB_NAME"
 
 type Pagination struct {
 	Limit int64

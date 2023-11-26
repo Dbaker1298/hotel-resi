@@ -1,15 +1,17 @@
 # Hotel reservation backend
 
-# Project environment variables
-```
+## Project environment variables
+
+```bash
 HTTP_LISTEN_ADDRESS=:3000
 JWT_SECRET=somethingsupersecretthatNOBODYKNOWS
-MONGO_DB_NAME=hotel-reservation
+MONGO_DB_NAME=hotel-resi
 MONGO_DB_URL=mongodb://localhost:27017
 MONGO_DB_URL_TEST=mongodb://localhost:27017
 ```
 
 ## Project outline
+
 - users -> book room from an hotel 
 - admins -> going to check reservation/bookings 
 - Authentication and authorization -> JWT tokens
@@ -18,13 +20,17 @@ MONGO_DB_URL_TEST=mongodb://localhost:27017
 - Scripts -> database management -> seeding, migration
 
 ## Resources
-### Mongodb driver 
+
+### Mongodb driver
+
 Documentation
-```
+
+```bash
 https://mongodb.com/docs/drivers/go/current/quick-start
 ```
 
 Installing mongodb client
+
 ```
 go get go.mongodb.org/mongo-driver/mongo
 ```

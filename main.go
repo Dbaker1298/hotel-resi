@@ -2,15 +2,22 @@ package main
 
 import (
 	"context"
-	"flag"
 	"log"
+	"os"
 
 	"github.com/Dbaker1298/hotel-resi/api"
 	"github.com/Dbaker1298/hotel-resi/db"
 	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+// Configuration
+// 1. MongoDB endpoint
+// 2. Listen address of HTTP server
+// 3. JWT secret key
+// 4. MongoDB database name
 
 // Create a new fiber instance with custom config
 var config = fiber.Config{
@@ -19,12 +26,8 @@ var config = fiber.Config{
 }
 
 func main() {
-	// 2023-11-24 18:51:33.710212679 -0500 EST m=+0.001809501
-
-	listenAddr := flag.String("listenAddr", ":5000", "Listen address of the API server")
-	flag.Parse()
-
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(db.DBURI))
+	mongoEndpoint := os.Getenv("MONGO_DB_URL")
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(mongoEndpoint))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -80,5 +83,12 @@ func main() {
 	// admin handlers
 	admin.Get("/booking", bookingHandler.HandleGetBookings)
 
-	app.Listen(*listenAddr)
+	listenAddr := os.Getenv("HTTP_LISTEN_ADDRESS")
+	app.Listen(listenAddr)
+}
+
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
+	}
 }
