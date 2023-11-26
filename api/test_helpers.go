@@ -12,11 +12,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const (
-	testdburi  = "mongodb://localhost:27017"
-	testdbname = "hotel-resi-test"
-)
-
 type testdb struct {
 	client *mongo.Client
 	*db.Store
