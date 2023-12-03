@@ -5,12 +5,13 @@ import (
 	"log"
 	"os"
 
-	"github.com/Dbaker1298/hotel-resi/api"
-	"github.com/Dbaker1298/hotel-resi/db"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/Dbaker1298/hotel-resi/api"
+	"github.com/Dbaker1298/hotel-resi/db"
 )
 
 // Configuration
@@ -22,6 +23,7 @@ import (
 // Create a new fiber instance with custom config
 var config = fiber.Config{
 	// Override default error handler
+
 	ErrorHandler: api.ErrorHandler,
 }
 
